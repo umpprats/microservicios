@@ -1,0 +1,39 @@
+services:
+  kafka-broker:
+    container_name: kafka-broker
+    image: apache/kafka:3.9.0
+    networks:
+      - mired
+    volumes:
+      - ./kafka-broker:/var/lib/kafka
+    ports:
+      - 19092:19092
+    environment:
+      - KAFKA_NODE_ID=1
+      - KAFKA_PROCESS_ROLES=broker
+      #- KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_LISTENERS=PLAINTEXT://:9092,PLAINTEXT_HOST://:19092
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka-broker:9092,PLAINTEXT_HOST://localhost:19092
+      - KAFKA_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+      - KAFKA_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      - KAFKA_CONTROLLER_QUORUM_VOTERS=0@kafka-controller:9093
+      - KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS=0
+      - KAFKA_JMX_PORT=9997
+      - KAFKA_JMX_HOSTNAME=kafka-broker
+      - KAFKA_NUM_PARTITIONS=3
+      - KAFKA_CLUSTER_ID=c4fc2bf5-3cbe-4bc2-8082-74228a86c99e
+      
+  kafdrop:
+    image: obsidiandynamics/kafdrop:4.0.2
+    restart: "no"
+    networks:
+      - mired
+    ports:
+      - 9000:9000
+    environment:
+      KAFKA_BROKERCONNECT:  kafka-broker:9092
+
+networks:
+    mired:
+        external: true

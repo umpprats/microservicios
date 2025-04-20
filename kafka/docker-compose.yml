@@ -1,0 +1,26 @@
+#https://docs.docker.com/guides/kafka/
+services:
+  kafka-controller:
+    container_name: kafka-controller
+    image: apache/kafka:3.9.0
+    networks:
+      - mired
+    volumes:
+      - ./kafka-controller:/var/lib/kafka
+    ports:
+      - 9093:9093
+    environment:
+      - KAFKA_KRAFT_MODE=true
+      - KAFKA_NODE_ID=0
+      - KAFKA_PROCESS_ROLES=controller
+      #- KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_LISTENERS=CONTROLLER://:9093
+      - KAFKA_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+      - KAFKA_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CONTROLLER_QUORUM_VOTERS=0@kafka-controller:9093
+      - KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS=0
+      - KAFKA_CLUSTER_ID=c4fc2bf5-3cbe-4bc2-8082-74228a86c99e
+
+networks:
+    mired:
+        external: true
