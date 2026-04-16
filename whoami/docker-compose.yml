@@ -1,5 +1,7 @@
 services:
   whoami:
+    deploy:
+      replicas: 2
     image: containous/whoami
     security_opt:
       - no-new-privileges:true
